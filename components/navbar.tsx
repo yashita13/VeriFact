@@ -8,7 +8,7 @@ const Navbar = () => {
                     {/* Left: Logo + Name */}
                     <a href="#home" className="flex items-center gap-3">
                         <img src="/img.png" alt="MisinformAI logo" className="w-9 h-9 rounded-full ring-1 ring-white/10" />
-                        <span className="text-2xl font-extrabold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">MisinformAI</span>
+                        <span className="text-2xl font-extrabold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">VeriFact</span>
                     </a>
 
                     {/* Right: Links (+ CTA) */}
