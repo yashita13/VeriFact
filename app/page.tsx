@@ -1,60 +1,89 @@
 // app/page.tsx
 import Navbar from "@/components/navbar";
-import UploadForm from "@/components/UploadForm";
 import Hero from "@/components/Hero";
 
 export default function Home() {
-    return (
-        <main className="bg-black text-white min-h-screen">
+  return (
+    <main className="bg-black text-white min-h-screen">
+      <Navbar />
 
-            <Navbar />
+      {/* Hero */}
+      <Hero />
 
-            {/* Cool Animated Hero */}
-            <Hero />
+      {/* About Section */}
+      <section id="about" className="relative py-20 md:py-28">
+        <div className="max-w-6xl mx-auto px-6">
+          <div className="grid md:grid-cols-2 gap-10 items-center">
+            <div>
+              <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight">About VeriFact</h2>
+              <p className="mt-4 text-gray-300 leading-relaxed">
+                VeriFact is an AI‑powered misinformation analysis platform that helps you quickly assess
+                the credibility of text, links, and media. Paste content or upload files to receive a
+                clear score, evidence‑backed reasoning, and transparent citations. Built for students,
+                journalists, and teams who need trustworthy insights fast.
+              </p>
+              <div className="mt-6 flex gap-3">
+                <a href="/sign-in" className="inline-flex items-center justify-center px-5 py-2.5 rounded-lg font-semibold bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-400 hover:to-purple-500 transition-colors">Get Started</a>
+                <a href="#features" className="inline-flex items-center justify-center px-5 py-2.5 rounded-lg border border-white/15 bg-white/5 hover:bg-white/10 transition">Explore Features</a>
+              </div>
+            </div>
+            <div className="relative">
+              <div className="absolute inset-0 -z-10 bg-[radial-gradient(50%_50%_at_50%_50%,rgba(168,85,247,0.15),transparent_60%)]" />
+              <div className="rounded-2xl border border-white/10 bg-white/5 backdrop-blur p-6 shadow-[0_0_60px_rgba(168,85,247,0.15)]">
+                <ul className="space-y-3 text-gray-200">
+                  <li className="flex items-start gap-3"><span className="mt-1 h-2 w-2 rounded-full bg-pink-400" /> AI‑assisted verification with concise explanations</li>
+                  <li className="flex items-start gap-3"><span className="mt-1 h-2 w-2 rounded-full bg-purple-400" /> Multiple input types: text, URLs, and media</li>
+                  <li className="flex items-start gap-3"><span className="mt-1 h-2 w-2 rounded-full bg-cyan-400" /> Transparent sources and rationale for every result</li>
+                  <li className="flex items-start gap-3"><span className="mt-1 h-2 w-2 rounded-full bg-emerald-400" /> Privacy‑first: your data stays secure</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
-            {/* Features */}
-            <section className="py-20 px-10 bg-black">
-                <h2 className="text-center text-3xl font-bold mb-10">
-                    Instant Detection & Education
-                </h2>
-                <div className="grid md:grid-cols-3 gap-8">
-                    {[
-                        { title: "Effortless Detection", desc: "Paste text or upload media, let AI analyze it instantly." },
-                        { title: "Your Safety, Our Tech", desc: "Discover manipulative patterns behind fake content." },
-                        { title: "AI-Powered Awareness", desc: "Stay updated with scams & misinformation trends." },
-                        { title: "Simple & Fast", desc: "One-click detection for quick fact checking." },
-                        { title: "Detailed Reports", desc: "Get in-depth reasoning & credibility scores." },
-                        { title: "Trusted AI Assistant", desc: "Chat with AI to learn how to identify misinformation." },
-                    ].map((item, i) => (
-                        <div
-                            key={i}
-                            className="bg-gray-900 p-6 rounded-xl shadow-lg border border-gray-800 hover:border-purple-500 transition"
-                        >
-                            <h3 className="text-xl font-semibold mb-2 text-purple-400">{item.title}</h3>
-                            <p className="text-gray-400">{item.desc}</p>
-                        </div>
-                    ))}
+      {/* Features Section */}
+      <section id="features" className="relative py-20 md:py-28">
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(60%_60%_at_100%_0%,rgba(236,72,153,0.12),transparent_60%)]" />
+        <div className="max-w-6xl mx-auto px-6 relative">
+          <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-center">Powerful Features</h2>
+          <p className="mt-3 text-gray-300 text-center max-w-2xl mx-auto">Everything you need to evaluate information with confidence.</p>
+
+          <div className="mt-10 grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[
+              { title: 'Text Analysis', desc: 'Paste text to get credibility, claims extraction, and evidence summaries.', color: 'from-pink-500 to-purple-500' },
+              { title: 'Link/Article Check', desc: 'Analyze URLs for source reputation, bias, and factual consistency.', color: 'from-purple-500 to-indigo-500' },
+              { title: 'Image/Video Cues', desc: 'Basic media heuristics and reverse‑signal prompts to spot tampering.', color: 'from-cyan-500 to-teal-500' },
+              { title: 'Source Transparency', desc: 'Citations and supporting references shown alongside each verdict.', color: 'from-fuchsia-500 to-pink-500' },
+              { title: 'Explainable Results', desc: 'Plain‑language rationales with highlights of key indicators.', color: 'from-indigo-500 to-cyan-500' },
+              { title: 'Privacy & Security', desc: 'Session‑based access; your inputs are protected and not shared.', color: 'from-emerald-500 to-teal-500' },
+            ].map((f, i) => (
+              <div key={i} className="group relative rounded-2xl border border-white/10 bg-white/5 p-6 overflow-hidden">
+                <div className={`absolute -top-16 -right-16 w-40 h-40 rounded-full blur-3xl opacity-30 bg-gradient-to-br ${f.color}`} />
+                <h3 className="text-xl font-semibold">{f.title}</h3>
+                <p className="mt-2 text-sm text-gray-300">{f.desc}</p>
+                <div className="mt-4">
+                  <a href="/sign-in" className="text-sm font-semibold text-white underline decoration-pink-400/50 group-hover:decoration-pink-400">Try now</a>
                 </div>
-            </section>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
 
-            {/* How It Works */}
-            <section id="learn" className="py-20 px-10 bg-black border-t border-gray-800">
-                <h2 className="text-center text-3xl font-bold mb-10">How It Works</h2>
-                <div className="flex flex-col md:flex-row justify-center items-center gap-8 text-center">
-                    {["1. Select Input", "2. AI Analyze", "3. Get Results"].map((step, i) => (
-                        <div key={i} className="p-6 bg-gray-900 rounded-lg border border-gray-700">
-                            <p className="text-lg font-semibold">{step}</p>
-                        </div>
-                    ))}
-                </div>
-                <div className="text-center mt-10">
-                    <a href="#analyze" className="bg-gradient-to-r from-pink-500 to-purple-600 px-6 py-3 rounded-lg font-semibold text-white inline-block">
-                        Try For Free
-                    </a>
-                </div>
-            </section>
-
-            <UploadForm />
-        </main>
-    );
+      {/* Contact / CTA Section */}
+      <section id="contact" className="relative py-20 md:py-28">
+        <div className="max-w-5xl mx-auto px-6">
+          <div className="rounded-2xl border border-white/10 bg-white/5 p-8 md:p-12 text-center shadow-[0_0_60px_rgba(168,85,247,0.15)]">
+            <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight">Start verifying with VeriFact</h2>
+            <p className="mt-3 text-gray-300">Sign in to access the analyser. New here? Create an account in seconds.</p>
+            <div className="mt-6 flex flex-col sm:flex-row gap-3 justify-center">
+              <a href="/sign-in" className="inline-flex items-center justify-center px-6 py-3 rounded-xl font-semibold bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-400 hover:to-purple-500 transition-colors">Sign In</a>
+              <a href="/sign-up" className="inline-flex items-center justify-center px-6 py-3 rounded-xl border border-white/15 bg-white/5 hover:bg-white/10 transition">Create account</a>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  );
 }

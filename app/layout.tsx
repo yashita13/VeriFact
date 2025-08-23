@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "MisinformAI — Project Twelve",
-  description: "AI-powered misinformation detection & education.",
+  title: "VeriFact — AI Misinformation Analysis",
+  description: "Professional, AI‑powered misinformation verification and insights.",
   icons: {
     icon: "/img.png",
   },

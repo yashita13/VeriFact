@@ -24,3 +24,38 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+html { scroll-behavior: smooth; }
+
+
+/* Brand theme variables */
+:root {
+  /* Light theme defaults */
+  --brand-base: #7c3aed;    /* violet-600 */
+  --brand-accent1: #ec4899; /* pink-500 */
+  --brand-accent2: #06b6d4; /* cyan-500 */
+
+  --surface: rgba(255,255,255,0.06);
+  --border: rgba(0,0,0,0.08);
+  --glow: rgba(168,85,247,0.25);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Dark theme tuned to image-inspired palette */
+    --brand-base: #7c3aed;
+    --brand-accent1: #ec4899;
+    --brand-accent2: #06b6d4;
+
+    --surface: rgba(255,255,255,0.05);
+    --border: rgba(255,255,255,0.10);
+    --glow: rgba(168,85,247,0.35);
+  }
+}
+
+
+/* Ensure base dark theme defaults (override bad ::root) */
+:root {
+  --background: #0a0a0a;
+  --foreground: #ededed;
+}

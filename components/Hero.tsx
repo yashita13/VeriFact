@@ -137,6 +137,7 @@ export default function Hero() {
 
   return (
     <section
+      id="home"
       ref={rootRef}
       className="relative overflow-hidden px-6 pt-10 pb-14 md:pt-14 md:pb-16"
       onMouseEnter={() => { hoverRef.current = true; setIsHover(true); try { gsap.to(orbRef.current, { scale: 1.08, boxShadow: "0 0 160px 30px rgba(168,85,247,0.45)", duration: 0.6, ease: "power3.out" }); gsap.to(ctaRef.current, { scale: 1.02, duration: 0.4, ease: "power3.out" }); } catch {} }}
@@ -148,29 +149,21 @@ export default function Hero() {
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(60%_60%_at_50%_40%,rgba(120,0,255,0.35),transparent_70%)]" />
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(40%_40%_at_0%_0%,rgba(255,0,128,0.25),transparent_60%)]" />
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(40%_40%_at_100%_100%,rgba(0,255,204,0.12),transparent_60%)]" />
-      {/* Hover spotlight layer */}
-      <div
-        className="pointer-events-none absolute inset-0 transition-opacity duration-300"
-        style={{
-          opacity: isHover ? 1 : 0,
-          background: `radial-gradient(500px 500px at ${spot.x}% ${spot.y}%, rgba(255,255,255,0.12), rgba(168,85,247,0.10) 35%, rgba(236,72,153,0.08) 55%, transparent 70%)`
-        }}
-      />
 
       <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-10 items-center">
         <div className="order-2 md:order-1 text-center md:text-left">
-          <h1 ref={titleRef} className="text-4xl md:text-6xl font-bold leading-tight">
-            <span className="block text-white/90">Project Twelve</span>
-            <span className="block mt-1 text-white/80">Misinformation AI</span>
+          <h1 ref={titleRef} className="text-4xl md:text-6xl font-extrabold leading-tight tracking-tight">
+            <span className="block text-white">VeriFact</span>
+            <span className="block mt-1 bg-gradient-to-r from-purple-400 via-fuchsia-400 to-pink-400 bg-clip-text text-transparent">Misinformation Analysis</span>
           </h1>
           <p ref={subtitleRef} className="mt-4 text-sm md:text-base text-gray-300 max-w-xl mx-auto md:mx-0">
-            Spot fakes fast. Upload text, links, or media to get a clear credibility score and a simple, educational breakdown.
+            Professional, AI‑powered verification for text, links, and media—clear credibility scores with simple explanations.
           </p>
           <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
-            <a ref={ctaRef} href="#analyze" className="inline-flex items-center justify-center px-6 py-3 rounded-xl font-semibold bg-gradient-to-r from-pink-500 to-purple-600 shadow-[0_0_40px_rgba(168,85,247,0.35)] hover:from-pink-400 hover:to-purple-500 transition-colors">
-              Analyze Now
+            <a ref={ctaRef} href="/sign-in" className="inline-flex items-center justify-center px-6 py-3 rounded-xl font-semibold bg-gradient-to-r from-pink-500 to-purple-600 shadow-[0_0_40px_rgba(168,85,247,0.35)] hover:from-pink-400 hover:to-purple-500 transition-colors">
+              Get started
             </a>
-            <a href="#learn" className="inline-flex items-center justify-center px-6 py-3 rounded-xl border border-white/15 bg-white/5 hover:bg-white/10 transition">
+            <a href="#about" className="inline-flex items-center justify-center px-6 py-3 rounded-xl border border-white/15 bg-white/5 hover:bg-white/10 transition">
               Learn More
             </a>
           </div>
@@ -186,16 +179,6 @@ export default function Hero() {
           <div ref={orbRef} className="orb-gradient absolute inset-0 m-auto w-64 sm:w-80 md:w-[360px] h-64 sm:h-80 md:h-[360px] rounded-full shadow-[0_0_120px_20px_rgba(168,85,247,0.25)]" style={{backgroundImage:`conic-gradient(from_180deg_at_50%_50%, ${brand?.base || '#7c3aed'} 0%, ${brand?.accent1 || '#ec4899'} 25%, ${brand?.accent2 || '#06b6d4'} 50%, ${brand?.base || '#7c3aed'} 100%)`}} />
           {/* Inner gloss */}
           <div className="absolute inset-0 m-auto w-48 sm:w-64 md:w-[300px] h-48 sm:h-64 md:h-[300px] rounded-full bg-gradient-to-br from-white/30 to-white/0 opacity-30 rotate-12" />
-          {/* Particles */}
-          <div className="pointer-events-none absolute inset-0">
-            {[...Array(14)].map((_, i) => (
-              <span key={i} className="parallax absolute w-1.5 h-1.5 rounded-full bg-white/60" style={{
-                left: `${8 + (i * 6) % 84}%`,
-                top: `${10 + (i * 9) % 80}%`,
-                boxShadow: "0 0 10px rgba(255,255,255,0.6)",
-              }} />
-            ))}
-          </div>
         </div>
       </div>
     </section>
