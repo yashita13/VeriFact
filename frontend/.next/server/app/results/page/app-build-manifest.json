@@ -1,17 +1,13 @@
 {
   "pages": {
-    "/(auth)/sign-in/page": [
+    "/results/page": [
       "static/chunks/node_modules_next_dist_01fcdebf._.js",
       "static/chunks/app_favicon_ico_mjs_c5600bb8._.js",
       "static/chunks/[root-of-the-server]__9d126714._.css",
       "static/chunks/app_layout_tsx_68b267f5._.js",
       "static/chunks/node_modules_next_dist_client_components_builtin_global-error_ef62684a.js",
-      "static/chunks/node_modules_next_3f48ce4d._.js",
-      "static/chunks/node_modules_zod_v4_d372c223._.js",
-      "static/chunks/node_modules_@firebase_auth_dist_esm_c6f0a217._.js",
-      "static/chunks/node_modules_7fe5c763._.js",
-      "static/chunks/_fa42b06c._.js",
-      "static/chunks/app_(auth)_sign-in_page_tsx_ef62684a._.js",
+      "static/chunks/node_modules_next_dist_b758c999._.js",
+      "static/chunks/app_results_page_tsx_ef62684a._.js",
       "static/chunks/[turbopack]_browser_dev_hmr-client_hmr-client_ts_6aaa83c7._.js",
       "static/chunks/node_modules_next_dist_compiled_react-dom_1f56dc06._.js",
       "static/chunks/node_modules_next_dist_compiled_next-devtools_index_d575f738.js",

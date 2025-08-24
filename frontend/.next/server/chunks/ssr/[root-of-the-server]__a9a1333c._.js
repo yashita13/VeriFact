@@ -154,7 +154,7 @@ const firebaseConfig = {
     apiKey: ("TURBOPACK compile-time value", "AIzaSyC-gkh3x3cubxNzH3XnXtgAJMhpE_DYlV4"),
     authDomain: ("TURBOPACK compile-time value", "verifact-d0f37.firebaseapp.com"),
     projectId: ("TURBOPACK compile-time value", "verifact-d0f37"),
-    storageBucket: ("TURBOPACK compile-time value", "verifact-d0f37.firebasestorage.app"),
+    storageBucket: ("TURBOPACK compile-time value", "verifact-d0f37.appspot.com"),
     messagingSenderId: ("TURBOPACK compile-time value", "957461353389"),
     appId: ("TURBOPACK compile-time value", "1:957461353389:web:a377e7cf48dbc893c78724")
 };
