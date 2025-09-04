@@ -1,0 +1,12 @@
+google-generativeai
+newspaper3k
+Pillow
+pytesseract
+openai-whisper
+moviepy
+python-dotenv
+streamlit 
+langchain 
+langchain-google-genai 
+requests 
+tavily-python
