@@ -1,140 +1,163 @@
-"use client";
-import React, { useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
+'use client';
 
-const ACCEPTED_IMAGE = ["image/png", "image/jpeg", "image/webp"];
-const ACCEPTED_AUDIO = ["audio/mpeg", "audio/wav", "audio/mp4", "audio/aac", "audio/ogg"];
-const ACCEPTED_VIDEO = ["video/mp4", "video/webm", "video/ogg"];
-
-function humanFileType(file?: File | null) {
-  if (!file) return "";
-  if (file.type.startsWith("image/")) return "image";
-  if (file.type.startsWith("audio/")) return "audio";
-  if (file.type.startsWith("video/")) return "video";
-  return "file";
-}
+import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { analyzePayload } from '@/lib/misinfoClient';
 
 export default function UploadForm() {
-  const router = useRouter();
-  const [text, setText] = useState("");
-  const [url, setUrl] = useState("");
-  const [file, setFile] = useState<File | null>(null);
-  const [error, setError] = useState<string>("");
-  const [submitting, setSubmitting] = useState(false);
+    const router = useRouter();
+    const [text, setText] = useState('');
+    const [url, setUrl] = useState('');
+    const [file, setFile] = useState<File | null>(null);
+    const [submitting, setSubmitting] = useState(false);
+    const [error, setError] = useState<string | null>(null);
 
-  const fileKind = useMemo(() => humanFileType(file), [file]);
-
-  function onFileChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const f = e.target.files?.[0] ?? null;
-    setFile(f);
-  }
-
-  function validate(): string | null {
-    if (!text && !url && !file) {
-      return "Please provide at least one input: Text, URL, or a media file.";
-    }
-    if (url && !/^https?:\/\//i.test(url)) {
-      return "URL must start with http:// or https://";
-    }
-    if (file) {
-      const t = file.type;
-      const ok = [...ACCEPTED_IMAGE, ...ACCEPTED_AUDIO, ...ACCEPTED_VIDEO].includes(t);
-      if (!ok) {
-        return "Unsupported file type. Please upload image (png/jpg/webp), audio (mp3/wav/aac/ogg), or video (mp4/webm/ogg).";
-      }
-    }
-    return null;
-  }
-
-  async function onSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setError("");
-    const v = validate();
-    if (v) {
-      setError(v);
-      return;
+    function onFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+        const f = e.target.files?.[0] || null;
+        setFile(f || null);
     }
 
-    // Minimal demo routing: pass metadata via query string (not the binary).
-    // A real app would upload to storage/backend and return an ID.
-    setSubmitting(true);
-    try {
-      const params = new URLSearchParams();
-      if (text) params.set("text", text.slice(0, 500)); // limit length in query
-      if (url) params.set("url", url);
-      if (file) {
-        params.set("fileName", file.name);
-        params.set("fileType", file.type);
-        params.set("kind", fileKind);
-      }
-      if (!fileKind && (text || url)) {
-        params.set("kind", text ? "text" : "url");
-      }
-      router.push(`/results?${params.toString()}`);
-    } finally {
-      setSubmitting(false);
+    async function onSubmit(e: React.FormEvent) {
+        e.preventDefault();
+        setError(null);
+
+        const trimmedText = text.trim();
+        const trimmedUrl = url.trim();
+
+        if (!trimmedText && !trimmedUrl && !file) {
+            setError('Please provide text, a URL, or upload a file.');
+            return;
+        }
+
+        const payload: { text?: string; url?: string; file?: File } = {};
+        if (trimmedText) payload.text = trimmedText;
+        else if (trimmedUrl) payload.url = trimmedUrl;
+        else if (file) payload.file = file;
+
+        try {
+            setSubmitting(true);
+            const result = await analyzePayload(payload);
+
+            sessionStorage.setItem('lastAnalysis', JSON.stringify(result));
+            sessionStorage.setItem(
+                'lastInputMeta',
+                JSON.stringify({
+                    kind: trimmedText ? 'text' : trimmedUrl ? 'url' : file ? 'file' : 'unknown',
+                    text: trimmedText || undefined,
+                    url: trimmedUrl || undefined,
+                    fileName: file?.name || undefined,
+                    fileType: file?.type || undefined,
+                })
+            );
+
+            router.push('/results');
+        } catch (err: any) {
+            setError(err?.message || 'Failed to analyze input.');
+        } finally {
+            setSubmitting(false);
+        }
     }
-  }
 
-  return (
-    <section id="analyze" className="py-16 px-6 bg-black border-t border-gray-800">
-      <h2 className="text-center text-3xl font-bold mb-6">Analyze Content</h2>
-      <p className="text-center text-gray-400 mb-10 max-w-2xl mx-auto">
-        Paste text or a link, or upload an image/audio/video. We will route you to a results page that explains credibility, reasoning, and next steps.
-      </p>
-      <form onSubmit={onSubmit} className="max-w-3xl mx-auto bg-gray-900 p-6 rounded-xl border border-gray-800 space-y-6">
-        {error ? (
-          <div className="bg-red-900/30 border border-red-800 text-red-300 px-4 py-3 rounded-md">{error}</div>
-        ) : null}
+    return (
+        <form
+            onSubmit={onSubmit}
+            className="relative max-w-5xl mx-auto px-6 sm:px-8 md:px-10 py-8 sm:py-10 space-y-8
+                       rounded-3xl border border-gray-800/60
+                       bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950
+                       shadow-[0_0_40px_rgba(139,92,246,0.2)] backdrop-blur-2xl"
+        >
+            {/* Glow accents */}
+            <div className="absolute -top-20 -left-20 w-56 sm:w-72 h-56 sm:h-72 bg-purple-500/20 rounded-full blur-3xl"></div>
+            <div className="absolute -bottom-20 -right-20 w-56 sm:w-72 h-56 sm:h-72 bg-pink-500/20 rounded-full blur-3xl"></div>
 
-        <div>
-          <label className="block text-sm text-gray-300 mb-2">Text</label>
-          <textarea
-            value={text}
-            onChange={(e) => setText(e.target.value)}
-            placeholder="Paste any text, caption, or transcript..."
-            rows={4}
-            className="w-full bg-black/40 border border-gray-700 rounded-lg p-3 outline-none focus:border-purple-500"
-          />
-        </div>
+            {/* Title */}
+            <div className="relative text-center mb-4">
+                <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent">
+                    Misinformation Analyzer
+                </h2>
+                <p className="mt-3 text-gray-400 text-sm sm:text-base max-w-2xl mx-auto">
+                    Paste text, drop a link, or upload a file. Get instant AI-powered analysis.
+                </p>
+            </div>
 
-        <div>
-          <label className="block text-sm text-gray-300 mb-2">URL</label>
-          <input
-            type="url"
-            value={url}
-            onChange={(e) => setUrl(e.target.value)}
-            placeholder="https://example.com/news-article"
-            className="w-full bg-black/40 border border-gray-700 rounded-lg p-3 outline-none focus:border-purple-500"
-          />
-        </div>
+            {/* 2-column layout */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+                {/* Left: Text + URL */}
+                <div className="space-y-6">
+                    {/* Text Input */}
+                    <div className="group relative">
+                        <label className="block text-sm font-medium text-gray-300 mb-2">Text</label>
+                        <textarea
+                            className="w-full h-[140px] sm:h-[160px] p-3 sm:p-4 rounded-xl
+                                       bg-gray-900/80 border border-gray-800 text-gray-100
+                                       placeholder-gray-500 focus:ring-2 focus:ring-purple-500
+                                       focus:outline-none transition resize-none text-sm sm:text-base"
+                            placeholder="Paste a claim, paragraph, or article..."
+                            value={text}
+                            onChange={(e) => setText(e.target.value)}
+                        />
+                    </div>
 
-        <div>
-          <label className="block text-sm text-gray-300 mb-2">Upload Media (Image, Audio, or Video)</label>
-          <input
-            type="file"
-            accept={[...ACCEPTED_IMAGE, ...ACCEPTED_AUDIO, ...ACCEPTED_VIDEO].join(",")}
-            onChange={onFileChange}
-            className="w-full text-gray-300 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-purple-600 file:text-white hover:file:bg-purple-500"
-          />
-          {file ? (
-            <p className="text-sm text-gray-400 mt-2">Selected {fileKind}: {file.name}</p>
-          ) : (
-            <p className="text-sm text-gray-500 mt-2">Max size depends on your hosting; only standard formats supported.</p>
-          )}
-        </div>
+                    {/* URL Input */}
+                    <div className="group relative">
+                        <label className="block text-sm font-medium text-gray-300 mb-2">URL</label>
+                        <input
+                            type="url"
+                            className="w-full p-3 rounded-xl
+                                       bg-gray-900/80 border border-gray-800 text-gray-100
+                                       placeholder-gray-500 focus:ring-2 focus:ring-pink-500
+                                       focus:outline-none transition text-sm sm:text-base"
+                            placeholder="https://example.com/news-article"
+                            value={url}
+                            onChange={(e) => setUrl(e.target.value)}
+                        />
+                    </div>
+                </div>
 
-        <div className="flex items-center justify-between">
-          <p className="text-gray-500 text-sm">We do not store your data in this demo. Files are not uploaded; metadata is passed for preview.</p>
-          <button
-            type="submit"
-            disabled={submitting}
-            className="bg-gradient-to-r from-pink-500 to-purple-600 px-6 py-3 rounded-lg font-semibold text-white disabled:opacity-50"
-          >
-            {submitting ? "Redirecting..." : "Analyze Now"}
-          </button>
-        </div>
-      </form>
-    </section>
-  );
+                {/* Right: File Upload */}
+                <div className="group relative flex flex-col">
+                    <label className="block text-sm font-medium text-gray-300 mb-2">Upload File</label>
+                    <div className="flex-1 relative flex flex-col items-center justify-center border-2 border-dashed border-gray-700
+                                    rounded-xl p-6 sm:p-8 text-gray-400 hover:border-purple-500 hover:text-gray-200 transition group text-sm sm:text-base">
+                        <input
+                            type="file"
+                            accept="image/png,image/jpeg,image/jpg,audio/mpeg,audio/wav,video/mp4,video/quicktime,video/x-msvideo"
+                            className="absolute inset-0 opacity-0 cursor-pointer"
+                            onChange={onFileChange}
+                        />
+                        {file ? (
+                            <p className="text-sm sm:text-base font-medium text-gray-200 break-words text-center">
+                                {file.name}{' '}
+                                <span className="text-gray-500">({file.type || 'unknown'})</span>
+                            </p>
+                        ) : (
+                            <p className="text-sm sm:text-base text-center">Click or drag & drop a file here</p>
+                        )}
+                    </div>
+                </div>
+            </div>
+
+            {/* Error */}
+            {error && (
+                <div className="text-sm text-red-400 bg-red-950/40 border border-red-900 rounded-lg p-3">
+                    {error}
+                </div>
+            )}
+
+            {/* Submit */}
+            <div className="flex items-center justify-center pt-2 sm:pt-4">
+                <button
+                    type="submit"
+                    disabled={submitting}
+                    className={`px-6 sm:px-8 md:px-10 py-2.5 sm:py-3 rounded-xl font-semibold text-base sm:text-lg text-white shadow-lg transition-all
+                        ${submitting
+                        ? 'bg-purple-800 cursor-not-allowed'
+                        : 'bg-gradient-to-r from-purple-600 via-pink-500 to-red-500 hover:scale-105 hover:shadow-[0_0_25px_rgba(236,72,153,0.5)]'}
+                    `}
+                >
+                    {submitting ? 'Analyzing…' : 'Analyze Now'}
+                </button>
+            </div>
+        </form>
+    );
 }
