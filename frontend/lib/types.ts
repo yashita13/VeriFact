@@ -4,7 +4,7 @@ import type { AnalysisResponse, Decision, WebResult, ClaimBreakdown } from '@/li
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
-// Helper function to safely interpret various "decision" strings
+// Helper function to safely interpret various "decision" strings from the backend
 function coerceDecision(v: any): Decision | undefined {
     if (!v) return undefined;
     const s = String(v).toLowerCase();
@@ -36,7 +36,7 @@ function normalizeToAnalysisResponse(body: any): AnalysisResponse {
             : typeof body?.reasoning === 'string' ? body.reasoning
                 : undefined;
 
-    // Normalize the explanation section
+    // Normalize the explanation section from various possible keys
     const expSrc = body?.explanation ?? body?.explainability ?? {};
     const claim_breakdown: ClaimBreakdown[] = Array.isArray(expSrc?.claim_breakdown)
         ? expSrc.claim_breakdown
@@ -47,7 +47,7 @@ function normalizeToAnalysisResponse(body: any): AnalysisResponse {
             : typeof body?.explanationText === 'string' ? body.explanationText
                 : undefined;
 
-    // Normalize various other fields
+    // Normalize various other metadata fields
     const explanatory_tag: string | undefined = expSrc?.explanatory_tag || body?.explanatory_tag;
     const corrected_news: string | undefined = expSrc?.corrected_news || body?.corrected_news;
     const misinformation_techniques: string[] | undefined = Array.isArray(expSrc?.misinformation_techniques)
@@ -57,7 +57,8 @@ function normalizeToAnalysisResponse(body: any): AnalysisResponse {
     const summary: string | undefined =
         typeof body?.summary === 'string' ? body.summary
             : typeof body?.concise_news === 'string' ? body.concise_news
-                : undefined;
+                : typeof body?.generated_summary === 'string' ? body.generated_summary
+                    : undefined;
 
     // Normalize web sources, which can come in different formats
     let web_results: WebResult[] = [];
@@ -66,19 +67,24 @@ function normalizeToAnalysisResponse(body: any): AnalysisResponse {
             title: String(w?.title || w?.metadata?.title || w?.url || ''),
             url: String(w?.url || w?.metadata?.url || ''),
         })).filter((x: WebResult) => x.url);
+    } else if (Array.isArray(body?.sources)) {
+        web_results = body.sources.map((s: any) => ({
+            title: String(s?.title || s?.url || ''),
+            url: String(s?.url || ''),
+        })).filter((x: WebResult) => x.url);
     }
 
     const fact_check_api = Array.isArray(body?.fact_check_api) ? body.fact_check_api : [];
 
-    // Pass through any errors from the backend
+    // Pass through any top-level errors from the backend
     const error = body?.error;
     const detail = body?.detail;
 
-    // Assemble the final, clean object
+    // Assemble the final, clean object that matches the AnalysisResponse interface
     return {
         summary,
         final_verdict: {
-            decision: decision ?? 'Error', // Default to Error if nothing is found
+            decision: decision ?? 'Error', // Default to 'Error' if no decision is found
             fake_score: fake_score,
             reasoning: reasoning ?? '',
         },
@@ -112,8 +118,6 @@ export async function POST(req: Request) {
 
         // This logic correctly separates file uploads from text/URL submissions
         if (file instanceof File && file.size > 0) {
-            // Your frontend client might not be using this path if it prioritizes text/url.
-            // But if it does, this handles it.
             const filePayload = new FormData();
             filePayload.append('file', file);
             res = await fetch(`${backendUrl}/analyze-file`, {
@@ -121,7 +125,7 @@ export async function POST(req: Request) {
                 body: filePayload,
             });
         } else {
-            // The request is for text or a URL. Send as JSON.
+            // The request is for text or a URL, so we send as JSON
             const jsonPayload: { text?: string; url?: string; input_type: string } = {
                 input_type: 'text' // Default
             };
@@ -157,6 +161,7 @@ export async function POST(req: Request) {
             status: 200,
             headers: { 'Content-Type': 'application/json' },
         });
+
     } catch (err: any) {
         return new Response(JSON.stringify({ error: 'Proxy error', detail: String(err?.message || err) }), { status: 500 });
     }

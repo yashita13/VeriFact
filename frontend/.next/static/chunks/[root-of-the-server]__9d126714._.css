@@ -220,6 +220,7 @@
     --color-orange-400: #ff8b1a;
     --color-orange-500: #fe6e00;
     --color-yellow-300: #ffe02a;
+    --color-green-300: #7bf1a8;
     --color-green-400: #05df72;
     --color-green-500: #00c758;
     --color-emerald-400: #00d294;
@@ -315,6 +316,7 @@
       --color-orange-400: color(display-p3 .950192 .561807 .211017);
       --color-orange-500: color(display-p3 .946589 .449788 .0757345);
       --color-yellow-300: color(display-p3 .982669 .880884 .32102);
+      --color-green-300: color(display-p3 .600292 .935514 .68114);
       --color-green-400: color(display-p3 .399536 .862346 .49324);
       --color-green-500: color(display-p3 .308734 .774754 .374307);
       --color-emerald-400: color(display-p3 .334701 .819603 .591575);
@@ -364,6 +366,7 @@
       --color-orange-400: lab(70.0429% 42.5156 75.8207);
       --color-orange-500: lab(64.272% 57.1788 90.3583);
       --color-yellow-300: lab(89.7033% -.480324 84.4917);
+      --color-green-300: lab(86.9953% -47.2691 25.0054);
       --color-green-400: lab(78.503% -64.9265 39.7492);
       --color-green-500: lab(70.5521% -66.5147 45.8072);
       --color-emerald-400: lab(75.0771% -60.7313 19.4146);
@@ -1134,6 +1137,12 @@
     margin-bottom: calc(calc(var(--spacing) * 1) * calc(1 - var(--tw-space-y-reverse)));
   }
 
+  :where(.space-y-2 > :not(:last-child)) {
+    --tw-space-y-reverse: 0;
+    margin-top: calc(calc(var(--spacing) * 2) * var(--tw-space-y-reverse));
+    margin-bottom: calc(calc(var(--spacing) * 2) * calc(1 - var(--tw-space-y-reverse)));
+  }
+
   :where(.space-y-3 > :not(:last-child)) {
     --tw-space-y-reverse: 0;
     margin-top: calc(calc(var(--spacing) * 3) * var(--tw-space-y-reverse));
@@ -1830,6 +1839,10 @@
     color: var(--color-gray-500);
   }
 
+  .text-green-300 {
+    color: var(--color-green-300);
+  }
+
   .text-green-400 {
     color: var(--color-green-400);
   }
@@ -2420,6 +2433,13 @@
     .sm\:text-4xl {
       font-size: var(--text-4xl);
       line-height: var(--tw-leading, var(--text-4xl--line-height));
+    }
+  }
+
+  @media (min-width: 40rem) {
+    .sm\:text-5xl {
+      font-size: var(--text-5xl);
+      line-height: var(--tw-leading, var(--text-5xl--line-height));
     }
   }
 
