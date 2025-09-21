@@ -42,6 +42,7 @@ interface AnalysisResponse {
     detail?: any;
 }
 
+
 export default function ResultsPage() {
     const [data, setData] = useState<AnalysisResponse | null>(null);
     const [parseError, setParseError] = useState<string | null>(null);
@@ -52,11 +53,8 @@ export default function ResultsPage() {
             if (raw) {
                 const parsed = JSON.parse(raw);
                 if (parsed && typeof parsed === 'object') {
-                    if (parsed.results) {
-                        setData(parsed.results);
-                    } else {
-                        setData(parsed);
-                    }
+                    // This handles both direct analysis objects and those nested under a 'results' key
+                    setData(parsed.results || parsed);
                 } else {
                     setParseError('Stored analysis has an invalid format.');
                 }
@@ -82,9 +80,9 @@ export default function ResultsPage() {
     const explanatoryTag = data?.explanation?.explanatory_tag ?? '';
     const correctedNews = data?.explanation?.corrected_news ?? '';
     const techniques = Array.isArray(data?.explanation?.misinformation_techniques)
-        ? (data!.explanation!.misinformation_techniques as string[])
+        ? (data.explanation.misinformation_techniques as string[])
         : [];
-    const apiError = data?.error || (typeof data?.detail === 'string' ? data.detail : '');
+    const apiError = data?.error || (typeof data?.detail === 'string' ? String(data.detail) : '');
 
     const score = typeof fakeScore === 'number' ? fakeScore : null;
 
@@ -162,7 +160,7 @@ export default function ResultsPage() {
 
                         <div className="space-y-8">
                             <div className="bg-white/5 backdrop-blur-lg rounded-2xl border border-gray-800 p-6 shadow-lg flex flex-col items-center">
-                                <h2 className="text-2xl font-semibold mb-4 text-yellow-300">Truth Score</h2>
+                                <h2 className="text-2xl font-semibold mb-4 text-yellow-300">Falsehood Score</h2>
                                 <div className="relative w-28 h-28 flex items-center justify-center">
                                     <div className="absolute inset-0 rounded-full bg-gray-700"></div>
                                     <div className="absolute inset-1 rounded-full bg-gray-900"></div>
