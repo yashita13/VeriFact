@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import Navbar from "@/components/navbar";
 import Link from "next/link";
+import type { AnalysisResponse, ClaimBreakdown, Decision } from "@/lib/types";
 
 type Decision = 'True' | 'False' | 'Misleading' | 'Unverifiable' | 'Error';
 
@@ -65,8 +66,6 @@ export default function ResultsPage() {
         }
     }, []);
 
-    // --- THIS IS THE FIX ---
-    // The function now correctly accepts the 'Unknown' type to prevent the TypeScript error.
     const decisionColor = (d?: Decision | 'Unknown') =>
         d === 'True' ? 'text-green-400'
             : d === 'False' ? 'text-red-400'
