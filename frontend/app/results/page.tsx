@@ -178,7 +178,7 @@ export default function ResultsPage() {
                         <div className="space-y-6 sm:space-y-8">
                             {/* Score */}
                             <div className="bg-white/5 backdrop-blur-lg rounded-2xl border border-gray-800 p-5 sm:p-6 shadow-lg flex flex-col items-center">
-                                <h2 className="text-xl sm:text-2xl font-semibold mb-3 sm:mb-4 text-yellow-300">Falsehood Score</h2>
+                                <h2 className="text-xl sm:text-2xl font-semibold mb-3 sm:mb-4 text-yellow-300">Truth Score</h2>
                                 <div className="relative w-24 h-24 sm:w-28 sm:h-28 flex items-center justify-center">
                                     <div className="absolute inset-0 rounded-full bg-gray-700"></div>
                                     <div className="absolute inset-1 rounded-full bg-gray-900"></div>

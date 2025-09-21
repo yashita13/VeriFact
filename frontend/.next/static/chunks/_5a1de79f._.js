@@ -550,7 +550,7 @@ function ResultsPage() {
                                             children: [
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h2", {
                                                     className: "text-xl sm:text-2xl font-semibold mb-3 sm:mb-4 text-yellow-300",
-                                                    children: "Falsehood Score"
+                                                    children: "Truth Score"
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/results/page.tsx",
                                                     lineNumber: 181,
