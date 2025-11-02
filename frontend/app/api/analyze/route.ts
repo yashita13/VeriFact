@@ -1,3 +1,4 @@
+// frontend/app/api/analyze/route.ts
 /* TypeScript */
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -22,7 +23,7 @@ export async function POST(req: Request) {
             const filePayload = new FormData();
             filePayload.append('file', file);
 
-            res = await fetch(`${backendUrl}/analyze`, {
+            res = await fetch(`${backendUrl}/analyze-file`, {
                 method: 'POST',
                 body: filePayload,
             });
