@@ -19,6 +19,9 @@ from dotenv import load_dotenv
 load_dotenv()
 
 import requests
+@app.get("/healthz")
+def health_check():
+    return {"status": "ok"}
 
 # def upload_to_imgbb(image_path, api_key="dcdadc1d756947a4074f6d548b0e28c0"):
 def upload_to_imgbb(image_path):
