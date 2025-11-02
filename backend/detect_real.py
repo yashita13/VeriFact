@@ -1,5 +1,5 @@
-import torch
-from transformers import AutoModelForImageClassification, AutoFeatureExtractor
+# import torch
+# from transformers import AutoModelForImageClassification, AutoFeatureExtractor
 from PIL import Image
 import cv2
 import numpy as np
@@ -37,6 +37,8 @@ print("✅ Model ready!")
 
 # --- Main function ---
 def analyze_image(image_path):
+    import torch
+    from transformers import AutoModelForImageClassification, AutoFeatureExtractor
     global i
     pil_img = Image.open(image_path).convert('RGB')
     img_size_for_model = (processor.size['width'], processor.size['height'])
