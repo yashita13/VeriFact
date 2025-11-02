@@ -1,48 +1,102 @@
-This is a Next.js app scaffold for an AI-powered misinformation detection UI.
+# VeriFact: AI-Powered Misinformation Detection Platform
 
-Features added in this demo:
-- Landing page with hero, features, and how-it-works sections.
-- Navbar displayed on all pages.
-- Upload/Analyze form to accept:
-  - Text input
-  - URL input
-  - File upload: image/audio/video (client-side validated types)
-- Redirect to a Results page that shows a structured analysis scaffold: classification, reasoning, credibility score placeholder, sources, and next steps.
+[![Next.js](https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white)](https://nextjs.org/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-005571?style=for-the-badge&logo=fastapi)](https://fastapi.tiangolo.com/)
+[![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
+[![Vercel](https://img.shields.io/badge/Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://vercel.com/)
+[![Render](https://img.shields.io/badge/Render-46E3B7?style=for-the-badge&logo=render&logoColor=white)](https://render.com/)
 
-Note: This demo does not integrate Google Cloud APIs yet. Files are not uploaded; only metadata (name, type) and textual inputs are passed via query parameters to preview the UI flow.
+VeriFact is a full-stack web application designed to combat the spread of misinformation. It leverages a powerful AI pipeline to analyze news, articles, and claims from various sources—including text, URLs, images, and social media—providing users with a detailed, evidence-based verdict on the content's reliability.
 
-## Getting Started
+![VeriFact Analysis Results](./frontend/public/screenshot.png)
+*(Note: You may need to replace this path with the correct path to your screenshot)*
 
-Install dependencies (includes GSAP for animations), then run the development server:
+---
 
-```bash
-npm run dev
-```
+## Core Features
 
-Open http://localhost:3000 in your browser.
+-   **Multi-Modal Input**: Analyze content from raw text, web URLs, and uploaded images.
+-   **Advanced AI Pipeline**: Utilizes LangChain and Google's Gemini models to perform a multi-step analysis, including summarization, evidence gathering, and verdict generation.
+-   **Evidence-Based Verification**: Scans a curated list of trusted news domains using the Tavily search API to find supporting or refuting evidence.
+-   **Detailed Explainability**: Provides a comprehensive report including:
+  -   A final verdict (e.g., Verified, Misleading, False).
+  -   A "Truthfulness Score" for a quick glance at reliability.
+  -   A claim-by-claim breakdown of the original text.
+  -   Detection of common misinformation techniques (e.g., Sensationalism, Missing Context).
+-   **WhatsApp Bot Integration**: Allows users to verify claims on the go via a Twilio-powered WhatsApp interface.
+-   **Multilingual Support**: Automatically detects the input language and provides the analysis in the original language.
 
-Workflow:
-1. On the home page, click "Start Free Detection" or scroll to the Analyze section.
-2. Provide text, a URL, or upload an image/audio/video file (supported formats only).
-3. Click "Analyze Now" to be redirected to /results where a demo analysis UI is shown.
+---
 
-## Providing Assets for a Cooler Landing Page
-To customize the new animated hero to your brand, provide the following (optional but recommended):
-- Logo: SVG or transparent PNG. Place as /public/logo.svg or /public/logo.png and I can wire it into the Navbar.
-- Background image or short looping video (5–10s, MP4/WebM, 1920x1080): place in /public/bg.mp4 or /public/bg.jpg.
-- Color palette: 2–3 brand hex colors (primary, accent, neutral) to replace the current purple/pink gradients.
-- Headline and subheading you want on the hero.
-- Any icon set for features (SVGs) to replace text-only cards.
+## Tech Stack
 
-Put files under the public/ folder:
-- public/logo.svg (or .png)
-- public/bg.mp4 (or bg.jpg)
-- public/icons/*.svg (optional)
+| Area      | Technology                                                                                                   |
+| :-------- | :----------------------------------------------------------------------------------------------------------- |
+| **Frontend**  | [**Next.js**](https://nextjs.org/), [**React**](https://react.dev/), [**Tailwind CSS**](https://tailwindcss.com/) |
+| **Backend**   | [**Python**](https://www.python.org/), [**FastAPI**](https://fastapi.tiangolo.com/), [**Uvicorn**](https://www.uvicorn.org/) |
+| **AI & Data** | [**LangChain**](https://www.langchain.com/), [**Google Gemini**](https://deepmind.google/technologies/gemini/), [**Tavily Search**](https://tavily.com/), [**Pytesseract (OCR)**](https://pypi.org/project/pytesseract/), [**OpenAI Whisper (Transcription)**](https://openai.com/research/whisper) |
+| **Deployment**| [**Vercel**](https://vercel.com/) (Frontend), [**Render**](https://render.com/) (Backend) |
 
-If you provide ai.jpeg in public/ it will be used as the hero background automatically. Place img.png in public/ and it will be used for the favicon and navbar logo. Tell me the exact filenames if you want different names and I will hook them up.
+---
 
-## Next Steps (not implemented in this demo)
-- Integrate Cloud Vision (OCR), Speech-to-Text, and Vertex AI for embeddings and reasoning.
-- Add language detection/translation and entity extraction.
-- Persist uploads to storage and pass an ID to the results page.
-- Replace placeholders with real credibility scoring and explanations.
+## Getting Started (Local Setup)
+
+Follow these instructions to get a copy of the project up and running on your local machine for development and testing purposes.
+
+### Prerequisites
+
+-   [**Git**](https://git-scm.com/)
+-   [**Node.js**](https://nodejs.org/) (v18 or later)
+-   [**Python**](https://www.python.org/downloads/) (v3.9 or later)
+-   **System-Level Dependencies**:
+  -   [**Tesseract OCR Engine**](https://github.com/UB-Mannheim/tesseract/wiki): Required for image text extraction. **Make sure to add it to your system's PATH during installation.**
+  -   [**FFmpeg**](https://ffmpeg.org/download.html): Required for processing audio/video files. **Make sure to add the `bin` folder to your system's PATH.**
+
+### Installation
+
+1.  **Clone the Repository**
+    ```sh
+    git clone https://github.com/your-username/your-repository-name.git
+    cd your-repository-name
+    ```
+
+2.  **Setup the Backend (Python)**
+    ```sh
+    # Navigate to the backend directory
+    cd backend
+
+    # Create and activate a virtual environment
+    python -m venv venv
+    .\venv\Scripts\activate  # On Windows
+    # source venv/bin/activate  # On macOS/Linux
+
+    # Install Python dependencies
+    pip install -r requirements.txt
+
+    # Create the environment file
+    # Create a new file named .env and paste the contents from the "Environment Variables" section below
+    ```
+
+3.  **Setup the Frontend (Next.js)**
+    ```sh
+    # Navigate to the frontend directory from the root
+    cd frontend
+
+    # Install npm packages
+    npm install
+
+    # Create the local environment file
+    # Create a new file named .env.local and add the following line:
+    NEXT_PUBLIC_BACKEND_URL=http://127.0.0.1:8000
+    ```
+
+4.  **Run the Application**
+  -   **Run the Backend Server**: Open a terminal, navigate to the `backend` directory, activate the venv, and run:
+      ```sh
+      uvicorn server:app --reload
+      ```
+  -   **Run the Frontend Server**: Open a *second* terminal, navigate to the `frontend` directory, and run:
+      ```sh
+      npm run dev
+      ```
+    Your frontend should now be running at `http://localhost:3000`.

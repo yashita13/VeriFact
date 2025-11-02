@@ -3,9 +3,8 @@ import os
 import asyncio
 import time
 import re
-import streamlit as st
 import requests
-import json 
+import json
 from dotenv import load_dotenv
 
 # ---------------- LangChain & AI Imports ----------------
@@ -24,7 +23,7 @@ from newspaper import Article, Config
 from PIL import Image
 import pytesseract
 import whisper
-from moviepy import VideoFileClip
+#from moviepy import VideoFileClip
 
 
 # ---------------- Setup & Configuration ----------------
@@ -45,7 +44,7 @@ TAVILY_API_KEY = os.getenv("TAVILY_API")
 
 # --- Initialize Clients & Models ---
 tavily_client = TavilyClient(api_key=TAVILY_API_KEY)
-llm = ChatGoogleGenerativeAI(model="gemini-1.5-flash-latest")
+llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash")
 
 # --- Trusted Domains for Web Search ---
 trusted_domains = [
@@ -57,76 +56,76 @@ trusted_domains = [
 def get_text_from_url(url):
     """Extracts the main article text from a URL."""
     try:
-        with st.spinner("📥 Extracting text from URL..."):
-            user_agent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36'
-            config = Config()
-            config.browser_user_agent = user_agent
-            
-            article = Article(url, config=config)
-            article.download()
-            article.parse()
-        st.success("✅ Text extracted successfully from URL.")
+
+        user_agent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36'
+        config = Config()
+        config.browser_user_agent = user_agent
+
+        article = Article(url, config=config)
+        article.download()
+        article.parse()
+        print("✅ Text extracted successfully from URL.")
         return article.text
     except Exception as e:
-        st.error(f"❌ Error extracting from URL: {e}")
+        print(f"❌ Error extracting from URL: {e}")
         return None
 
 def get_text_from_image(uploaded_file):
     """Extracts text from an uploaded image file using OCR."""
     try:
-        with st.spinner("🖼️ Extracting text from image..."):
-            # To handle the file in memory without saving it permanently
 
-            image = Image.open(uploaded_file)
-            text = pytesseract.image_to_string(image)
-        st.success("✅ Text extracted successfully from image.")
+        # To handle the file in memory without saving it permanently
+
+        image = Image.open(uploaded_file)
+        text = pytesseract.image_to_string(image)
+        print("✅ Text extracted successfully from image.")
         return text
     except Exception as e:
-        st.error(f"❌ Error extracting from image: {e}")
+        print(f"❌ Error extracting from image: {e}")
         return None
 
-def get_text_from_media(uploaded_file):
-    """Transcribes text from an audio or video file using Whisper."""
-    try:
-        # Save the uploaded file to a temporary path for processing
-        temp_dir = "temp_media"
-        os.makedirs(temp_dir, exist_ok=True)
-        file_path = os.path.join(temp_dir, uploaded_file.name)
-        
-        with open(file_path, "wb") as f:
-            f.write(uploaded_file.getbuffer())
+# def get_text_from_media(uploaded_file):
+#     """Transcribes text from an audio or video file using Whisper."""
+#     try:
+#         # Save the uploaded file to a temporary path for processing
+#         temp_dir = "temp_media"
+#         os.makedirs(temp_dir, exist_ok=True)
+#         file_path = os.path.join(temp_dir, uploaded_file.name)
 
-        with st.spinner("🎤 Transcribing media file (this may take a moment)..."):
-            # Check if it's a video file and extract audio
-            if file_path.lower().endswith(('.mp4', '.mov', '.avi')):
-                video = VideoFileClip(file_path)
-                audio_path = os.path.join(temp_dir, "temp_audio.wav")
-                video.audio.write_audiofile(audio_path, codec='pcm_s16le')
-                media_to_transcribe = audio_path
-            else:
-                media_to_transcribe = file_path
+#         with open(file_path, "wb") as f:
+#             f.write(uploaded_file.getbuffer())
 
-            model = whisper.load_model("base")
-            result = model.transcribe(media_to_transcribe)
-            text = result["text"]
+#         with st.spinner("🎤 Transcribing media file (this may take a moment)..."):
+#             # Check if it's a video file and extract audio
+#             if file_path.lower().endswith(('.mp4', '.mov', '.avi')):
+#                 video = VideoFileClip(file_path)
+#                 audio_path = os.path.join(temp_dir, "temp_audio.wav")
+#                 video.audio.write_audiofile(audio_path, codec='pcm_s16le')
+#                 media_to_transcribe = audio_path
+#             else:
+#                 media_to_transcribe = file_path
 
-            # Clean up temporary files
-            os.remove(file_path)
-            if 'audio_path' in locals() and os.path.exists(audio_path):
-                os.remove(audio_path)
-            if not os.listdir(temp_dir):
-                os.rmdir(temp_dir)
-                
-        st.success("✅ Transcription complete.")
-        return text
-    except Exception as e:
-        st.error(f"❌ Error transcribing media: {e}")
-        # Clean up in case of error
-        if 'file_path' in locals() and os.path.exists(file_path):
-            os.remove(file_path)
-        if 'audio_path' in locals() and os.path.exists(audio_path):
-            os.remove(audio_path)
-        return None
+#             model = whisper.load_model("base")
+#             result = model.transcribe(media_to_transcribe)
+#             text = result["text"]
+
+#             # Clean up temporary files
+#             os.remove(file_path)
+#             if 'audio_path' in locals() and os.path.exists(audio_path):
+#                 os.remove(audio_path)
+#             if not os.listdir(temp_dir):
+#                 os.rmdir(temp_dir)
+
+#         st.success("✅ Transcription complete.")
+#         return text
+#     except Exception as e:
+#         st.error(f"❌ Error transcribing media: {e}")
+#         # Clean up in case of error
+#         if 'file_path' in locals() and os.path.exists(file_path):
+#             os.remove(file_path)
+#         if 'audio_path' in locals() and os.path.exists(audio_path):
+#             os.remove(audio_path)
+#         return None
 
 # ---------------- Language Detection & Translation ----------------
 def detect_language(text):
@@ -163,12 +162,12 @@ def web_search(news):
         ]
         return docs
     except Exception as e:
-        st.warning(f"Tavily search failed: {e}")
+        print(f"Tavily search failed: {e}")
         return []
 
 # ---------------- Detection Chain ----------------
 detection_prompt = ChatPromptTemplate.from_messages([
-     ("system",
+    ("system",
      "You are a meticulous fact-checking assistant. "
      "Your task is to analyze whether the given news is true, false, or misleading "
      "based ONLY on the information from the provided sources. "
@@ -180,7 +179,7 @@ detection_prompt = ChatPromptTemplate.from_messages([
      "4. If some sub-claims are true and others are false or unverifiable, mark it as Misleading.\n"
      "5. Never output 'True' if even one sub-claim is false.\n"
      "6. If there is insufficient data, mark it as Unverifiable.\n"
-     "Give Reasoning strictly in the user’s original language: {source_language}. "
+     "Give Reasoning strictly in the English. "
      "If the input is Hindi, output in Hindi; if Tamil, output in Tamil, etc.\n\n"),
     ("human",
      "Sources:\n{context}\n\n"
@@ -190,7 +189,7 @@ detection_prompt = ChatPromptTemplate.from_messages([
      "{{\n"
      "  \"decision\": \"True / False / Misleading / Unverifiable\",\n"
      "  \"fake_score\": 0-100,\n"
-     "  \"reasoning\": \"One short explanation strictly in {source_language}, strictly based on sources\"\n"
+     "  \"reasoning\": \"One short explanation strictly in English, strictly based on sources\"\n"
      "}}")
 ])
 
@@ -201,6 +200,9 @@ Summarize_prompt = ChatPromptTemplate.from_messages(
          "You are a helpful and precise assistant. Summarize the given text in 150–200 characters. "
          "Do not add any external information or assumptions. Only use facts explicitly mentioned in the text. "
          "Preserve all important details, names, dates, numbers, and context. "
+         "Don't omit critical information that could change the meaning. "
+         "Don't add your own opinions or interpretations. "
+         "Just focus on summarizing the provided content accurately. "
          "Ensure the summary is clear, concise, and faithful to the original content. "
          "If something is unclear or missing in the input, do not try to infer or create details—just omit them."
          "if the text is already concise, return it as is."),
@@ -214,18 +216,20 @@ explainability_prompt = ChatPromptTemplate.from_messages([
     ("system",
      "You are an expert AI explainability assistant. "
      "Your job is to explain how the fact-checking decision was reached. "
-     "Break down the news into smaller sub-claims. "
+     "Break down the news into smaller sub-claims. all the sub claims must be unqiue and atomic resolving all ambiguties. "
      "For each sub-claim, identify which sources support or refute it, "
      "and extract the exact evidence (quotes or facts) from the sources. "
      "If some sub-claims are unverifiable, explain what information is missing. "
      "Do not invent or assume any facts outside the provided sources."
      "Along with decision and reasoning, always identify if the claim uses one or more of these common misinformation techniques:"
-     "Conflation (mixing unrelated facts), "  
-     "Authority Bias (citing a trusted source incorrectly), "  
-     "Missing Context (cherry-picked facts), "  
-     "Sensationalism (emotional or exaggerated language), "  
-     "Fabrication (completely false with no evidence), "  
+     "Conflation (mixing unrelated facts), "
+     "Authority Bias (citing a trusted source incorrectly), "
+     "Missing Context (cherry-picked facts), "
+     "Sensationalism (emotional or exaggerated language), "
+     "Fabrication (completely false with no evidence), "
      "Unverified Source (unknown blogs, WhatsApp forwards, etc.)."
+     "maximum 5 atomic sub-claims must be generated."
+     "all the subclaims must be factual they should not be nonsense."
      "Give output strictly in the user’s original language: {source_language}. "
      "If the input is Hindi, output in Hindi; if Tamil, output in Tamil, etc.\n\n"),
     ("human",
@@ -245,6 +249,9 @@ explainability_prompt = ChatPromptTemplate.from_messages([
      "5. Give the correct news if it is misleading or false based on evidences.\n"
      "6. Give the Explanatory Tag for the news such as Outdated Information, Exaggeration, Missing Context, Completely False, Accurate, Misleading or Partially True.\n"
      "7. Identify if the claim uses one or more of the common misinformation techniques.\n"
+     "8. All the subclaims must be unique and atomic resolving all ambiguties.\n\n"
+     "9. output must be strictly in JSON format as shown below.\n\n"
+     "10. output should not contain similar sub-claims or duplicate evidences.\n\n"
      "Output Format (strict JSON):\n"
      "{{\n"
      "  \"claim_breakdown\": [\n"
@@ -255,7 +262,7 @@ explainability_prompt = ChatPromptTemplate.from_messages([
      "  \"explanatory_tag\": \"Outdated Information, Exaggeration, Missing Context, Completely False, Accurate, Misleading or Partially True\",\n"
      "  \"misinformation_techniques\": [\"list of techniques used in the claim, if any, with reasons for detection.\"]\n"
      "}}"
-    )
+     )
 ])
 
 # ---------------- Main Pipeline ----------------
@@ -270,18 +277,18 @@ async def pipeline(news):
         news = translate_to_english(news, source_language)
 
     # Step 1: Summarize input text
-    st.info("✍️ Summarizing the claim...")
+    print("✍️ Summarizing the claim...")
     concise_news = await summarizer.ainvoke({"news": news})
-    st.write(f"**Generated Summary:** {concise_news}")
+    print(f"**Generated Summary:** {concise_news}")
 
     # Step 2 & 3: Run Google Fact Check and Web Search concurrently
-    st.info("🕵️ Searching for evidence...")
+    print("🕵️ Searching for evidence...")
     fact_check_task = asyncio.to_thread(fact_check, concise_news)
     web_search_task = asyncio.to_thread(web_search, concise_news)
     fact_check_res, web_res = await asyncio.gather(fact_check_task, web_search_task)
-    
+
     # Step 4: Process results and generate final verdict
-    st.info("🧠 Analyzing evidence and making a decision...")
+    print("🧠 Analyzing evidence and making a decision...")
     if web_res:
         verdict_output = await detection_chain.ainvoke(
             {"context": web_res, "query": concise_news,"source_language":source_language}
@@ -295,7 +302,7 @@ async def pipeline(news):
         except (json.JSONDecodeError, ValueError) as e:
             verdict = {"decision": "Error", "fake_score": 0, "reasoning": f"Failed to parse model's response. Error: {e}. Raw output: '{verdict_output}'"}
             explanation_data = {} # Ensure explanation_data is initialized
-        
+
         # Only proceed to explanation if verdict was parsed successfully
         if verdict.get("decision") != "Error":
             explanation = await explanation_chain.ainvoke(
@@ -329,113 +336,113 @@ async def pipeline(news):
     }
 
 # ---------------- Streamlit UI (CORRECTED LOGIC) ----------------
-if __name__ == "__main__":
-    st.set_page_config(page_title="AI Fact-Checker", page_icon="📰", layout="wide")
-    st.title("📰 AI Fact-Checker")
-    st.write("Verify news from text, URLs, images, or audio/video files.")
+# if __name__ == "__main__":
+#     st.set_page_config(page_title="AI Fact-Checker", page_icon="📰", layout="wide")
+#     st.title("📰 AI Fact-Checker")
+#     st.write("Verify news from text, URLs, images, or audio/video files.")
 
-    raw_text = ""
-    
-    # --- Input Tabs ---
-    tab1, tab2, tab3 = st.tabs(["▶️ Text or URL", "🖼️ Image", "🎤 Audio/Video"])
+#     raw_text = ""
 
-    with tab1:
-        text_input = st.text_area("Paste a news article, claim, or URL:", height=200, key="text_input")
-    with tab2:
-        uploaded_image = st.file_uploader("Upload an image file", type=["png", "jpg", "jpeg"], key="image_uploader")
-    with tab3:
-        uploaded_media = st.file_uploader("Upload an audio or video file", type=["mp3", "wav", "mp4", "mov", "avi"], key="media_uploader")
+#     # --- Input Tabs ---
+#     tab1, tab2, tab3 = st.tabs(["▶️ Text or URL", "🖼️ Image", "🎤 Audio/Video"])
+
+#     with tab1:
+#         text_input = st.text_area("Paste a news article, claim, or URL:", height=200, key="text_input")
+#     with tab2:
+#         uploaded_image = st.file_uploader("Upload an image file", type=["png", "jpg", "jpeg"], key="image_uploader")
+#     with tab3:
+#         uploaded_media = st.file_uploader("Upload an audio or video file", type=["mp3", "wav", "mp4", "mov", "avi"], key="media_uploader")
 
 
-    # --- Verification Button and Logic ---
-    if st.button("🔍 Verify", use_container_width=True):
-        # This logic block correctly prioritizes the input source and extracts text.
-        # It ensures that no matter which tab is used, the 'raw_text' variable is
-        # populated before the pipeline is called.
-        if text_input.strip():
-            if re.match(r'^https?://', text_input.strip()):
-                raw_text = get_text_from_url(text_input.strip())
-            else:
-                raw_text = text_input
-        elif uploaded_image is not None:
-            raw_text = get_text_from_image(uploaded_image)
-        elif uploaded_media is not None:
-            raw_text = get_text_from_media(uploaded_media)
+#     # --- Verification Button and Logic ---
+#     if st.button("🔍 Verify", use_container_width=True):
+#         # This logic block correctly prioritizes the input source and extracts text.
+#         # It ensures that no matter which tab is used, the 'raw_text' variable is
+#         # populated before the pipeline is called.
+#         if text_input.strip():
+#             if re.match(r'^https?://', text_input.strip()):
+#                 raw_text = get_text_from_url(text_input.strip())
+#             else:
+#                 raw_text = text_input
+#         elif uploaded_image is not None:
+#             raw_text = get_text_from_image(uploaded_image)
+#         # elif uploaded_media is not None:
+#         #     raw_text = get_text_from_media(uploaded_media)
 
-        # --- THIS SECTION RUNS THE PIPELINE AND DISPLAYS THE FULL REPORT ---
-        # It is now correctly executed for ANY input type, as long as text
-        # was successfully extracted into the 'raw_text' variable.
-        if raw_text and raw_text.strip():
-            st.markdown("---")
-            st.subheader("📊 Fact-Checking In Progress...")
-            
-            start_time = time.time()
-            results = asyncio.run(pipeline(raw_text))
-            end_time = time.time()
+#         # --- THIS SECTION RUNS THE PIPELINE AND DISPLAYS THE FULL REPORT ---
+#         # It is now correctly executed for ANY input type, as long as text
+#         # was successfully extracted into the 'raw_text' variable.
+#         if raw_text and raw_text.strip():
+#             st.markdown("---")
+#             st.subheader("📊 Fact-Checking In Progress...")
 
-            st.markdown("---")
-            st.subheader("✅ Final Report")
-            
-            verdict = results["final_verdict"]
-            final_explanation = results["explanation"]
+#             start_time = time.time()
+#             results = asyncio.run(pipeline(raw_text))
+#             end_time = time.time()
 
-            decision = verdict.get("decision", "N/A")
-            color = {"True": "green", "False": "red", "Misleading": "orange", "Unverifiable": "blue", "Error": "gray"}.get(decision, "gray")
+#             st.markdown("---")
+#             st.subheader("✅ Final Report")
 
-            st.markdown(f"### Decision: <span style='color:{color};'>{decision}</span>", unsafe_allow_html=True)
-            
-            fake_score = verdict.get("fake_score", 0)
-            st.progress(int(fake_score), text=f"Confidence Score (Likely Fake): {fake_score}%")
-            
-            st.info(f"**Reasoning:**\n{verdict.get('reasoning', 'No reasoning provided.')}")
-            
-            st.write(f"*Analysis completed in {end_time - start_time:.2f} seconds.*")
-            
-            # --- This is the Detailed Explanation section that was previously missing for image/media ---
-            with st.expander("🧐 Detailed Explanation (Explainability)"):
-                if final_explanation and final_explanation.get("claim_breakdown"):
-                    st.subheader("🔎 Claim-by-Claim Analysis")
-                    st.table(final_explanation["claim_breakdown"])
+#             verdict = results["final_verdict"]
+#             final_explanation = results["explanation"]
 
-                    st.subheader("📌 Overall Explanation")
-                    st.write(final_explanation.get("explanation", "No explanation provided."))
-                    st.write(f"**Explanatory Tag:** {final_explanation.get('explanatory_tag', 'N/A')}")
-                    
-                    st.subheader("📝 Corrected News (if applicable)")
-                    corrected_news = final_explanation.get("corrected_news", "").strip()
-                    if corrected_news:
-                        st.write(corrected_news)
-                    else:
-                        st.write("The original news was accurate, or no correction was needed.")
+#             decision = verdict.get("decision", "N/A")
+#             color = {"True": "green", "False": "red", "Misleading": "orange", "Unverifiable": "blue", "Error": "gray"}.get(decision, "gray")
 
-                    st.subheader("⚠️ Misinformation Techniques Detected")
-                    techniques = final_explanation.get("misinformation_techniques", [])
-                    if techniques:
-                        for tech in techniques:
-                            st.write(f"- {tech}") 
-                    else:
-                        st.write("No common misinformation techniques were detected.")
-                else:
-                    st.write("No detailed explanation was generated. This could be due to an error in parsing the model's response or a lack of sufficient data.")
-            
-            # --- Evidence Sources Expander ---
-            with st.expander("📚 View Evidence Sources"):
-                st.write("**Web Search Results:**")
-                if results["web_results"]:
-                    for doc in results["web_results"]:
-                        st.markdown(f"- **{doc.metadata.get('title', 'No Title')}**: [Link]({doc.metadata.get('url', '#')})")
-                else:
-                    st.write("No web sources were found.")
+#             st.markdown(f"### Decision: <span style='color:{color};'>{decision}</span>", unsafe_allow_html=True)
 
-                st.write("**Google Fact-Check API Results:**")
-                if results["fact_check_api"]:
-                    for claim in results["fact_check_api"][:3]: # Show top 3
-                        review = claim['claimReview'][0]
-                        st.markdown(f"- **Claim:** {claim.get('text', 'N/A')}")
-                        st.markdown(f"  - **Publisher:** {review.get('publisher', {}).get('name', 'N/A')}")
-                        st.markdown(f"  - **Rating:** {review.get('textualRating', 'N/A')}")
-                else:
-                    st.write("No matching claims found in the Google Fact-Check database.")
+#             fake_score = verdict.get("fake_score", 0)
+#             st.progress(int(fake_score), text=f"Confidence Score (Likely Fake): {fake_score}%")
 
-        else:
-            st.error("Please provide an input. No text could be extracted to verify.")
+#             st.info(f"**Reasoning:**\n{verdict.get('reasoning', 'No reasoning provided.')}")
+
+#             st.write(f"*Analysis completed in {end_time - start_time:.2f} seconds.*")
+
+#             # --- This is the Detailed Explanation section that was previously missing for image/media ---
+#             with st.expander("🧐 Detailed Explanation (Explainability)"):
+#                 if final_explanation and final_explanation.get("claim_breakdown"):
+#                     st.subheader("🔎 Claim-by-Claim Analysis")
+#                     st.table(final_explanation["claim_breakdown"])
+
+#                     st.subheader("📌 Overall Explanation")
+#                     st.write(final_explanation.get("explanation", "No explanation provided."))
+#                     st.write(f"**Explanatory Tag:** {final_explanation.get('explanatory_tag', 'N/A')}")
+
+#                     st.subheader("📝 Corrected News (if applicable)")
+#                     corrected_news = final_explanation.get("corrected_news", "").strip()
+#                     if corrected_news:
+#                         st.write(corrected_news)
+#                     else:
+#                         st.write("The original news was accurate, or no correction was needed.")
+
+#                     st.subheader("⚠️ Misinformation Techniques Detected")
+#                     techniques = final_explanation.get("misinformation_techniques", [])
+#                     if techniques:
+#                         for tech in techniques:
+#                             st.write(f"- {tech}")
+#                     else:
+#                         st.write("No common misinformation techniques were detected.")
+#                 else:
+#                     st.write("No detailed explanation was generated. This could be due to an error in parsing the model's response or a lack of sufficient data.")
+
+#             # --- Evidence Sources Expander ---
+#             with st.expander("📚 View Evidence Sources"):
+#                 st.write("**Web Search Results:**")
+#                 if results["web_results"]:
+#                     for doc in results["web_results"]:
+#                         st.markdown(f"- **{doc.metadata.get('title', 'No Title')}**: [Link]({doc.metadata.get('url', '#')})")
+#                 else:
+#                     st.write("No web sources were found.")
+
+#                 st.write("**Google Fact-Check API Results:**")
+#                 if results["fact_check_api"]:
+#                     for claim in results["fact_check_api"][:3]: # Show top 3
+#                         review = claim['claimReview'][0]
+#                         st.markdown(f"- **Claim:** {claim.get('text', 'N/A')}")
+#                         st.markdown(f"  - **Publisher:** {review.get('publisher', {}).get('name', 'N/A')}")
+#                         st.markdown(f"  - **Rating:** {review.get('textualRating', 'N/A')}")
+#                 else:
+#                     st.write("No matching claims found in the Google Fact-Check database.")
+
+#         else:
+#             st.error("Please provide an input. No text could be extracted to verify.")
