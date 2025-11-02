@@ -44,7 +44,7 @@ TAVILY_API_KEY = os.getenv("TAVILY_API")
 
 # --- Initialize Clients & Models ---
 tavily_client = TavilyClient(api_key=TAVILY_API_KEY)
-llm = ChatGoogleGenerativeAI(model="gemini-pro")
+llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash")
 
 # --- Trusted Domains for Web Search ---
 trusted_domains = [
