@@ -1,5 +1,5 @@
-# import torch
-# from transformers import AutoModelForImageClassification, AutoFeatureExtractor
+import torch
+from transformers import AutoModelForImageClassification, AutoFeatureExtractor
 from PIL import Image
 import cv2
 import numpy as np
@@ -27,19 +27,45 @@ class ModelWrapper(torch.nn.Module):
         return outputs.logits
 
 # --- Load model globally (so it loads only once) ---
-print("🔄 Loading Deepfake model...")
-MODEL_NAME = "prithivMLmods/Deepfake-Detection-Exp-02-21"
-processor = AutoFeatureExtractor.from_pretrained(MODEL_NAME)
-hf_model = AutoModelForImageClassification.from_pretrained(MODEL_NAME)
-model = ModelWrapper(hf_model)
-model.eval()
-print("✅ Model ready!")
+# print("🔄 Loading Deepfake model...")
+# MODEL_NAME = "prithivMLmods/Deepfake-Detection-Exp-02-21"
+# processor = AutoFeatureExtractor.from_pretrained(MODEL_NAME)
+# hf_model = AutoModelForImageClassification.from_pretrained(MODEL_NAME)
+# model = ModelWrapper(hf_model)
+# model.eval()
+# print("✅ Model ready!")
+# --- LAZY LOADING SETUP ---
+# We define the variables as None at the start. They will be loaded later.
+processor = None
+hf_model = None
+model = None
+
+def initialize_deepfake_model():
+    """
+    This function loads the heavy models into memory.
+    It will only run ONCE, the first time it's called.
+    """
+    global processor, hf_model, model
+
+    # If the model is already loaded, do nothing.
+    if model is not None:
+        return
+
+    print("🚀 LAZY LOADING: Initializing Deepfake model for the first time...")
+    MODEL_NAME = "prithivMLmods/Deepfake-Detection-Exp-02-21"
+
+    # These are the heavy lines that are now moved inside the function
+    processor = AutoFeatureExtractor.from_pretrained(MODEL_NAME)
+    hf_model = AutoModelForImageClassification.from_pretrained(MODEL_NAME)
+    model = ModelWrapper(hf_model)
+    model.eval()
+
+    print("✅ Deepfake Model ready!")
 
 # --- Main function ---
 def analyze_image(image_path):
-    import torch
-    from transformers import AutoModelForImageClassification, AutoFeatureExtractor
     global i
+    initialize_deepfake_model()
     pil_img = Image.open(image_path).convert('RGB')
     img_size_for_model = (processor.size['width'], processor.size['height'])
     inputs = processor(images=pil_img, return_tensors="pt")
