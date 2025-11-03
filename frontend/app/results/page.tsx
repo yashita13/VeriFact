@@ -28,7 +28,7 @@ export interface WebResult {
     url: string;
 }
 
-interface AnalysisResponse {
+export interface AnalysisResponse {
     summary?: string;
     final_verdict?: {
         decision?: Decision;
