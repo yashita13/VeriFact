@@ -2,6 +2,18 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { gsap } from "gsap";
 
+// ADD THIS ICON COMPONENT
+const WhatsAppIcon = () => (
+    <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        className="w-5 h-5 mr-2"
+        fill="currentColor"
+    >
+      <path d="M16.6 14.2c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1-.2.2-.6.7-.8.9-.1.1-.3.2-.5.1-.2-.1-.9-.3-1.8-1.1-.7-.6-1.1-1.4-1.3-1.6-.1-.2 0-.4.1-.5.1-.1.2-.2.4-.4.1-.1.2-.2.2-.4.1-.1.1-.3 0-.4-.1-.1-1.2-2.8-1.6-3.8-.4-.9-.8-1-.9-1h-.5c-.2 0-.4.1-.6.3s-.7.7-.7 1.6.7 3.1 1.7 4.1c1 1 1.9 1.9 3.4 2.6.4.2.8.3 1.1.4.5.1 1-.1 1.4-.3.4-.2.6-.5.8-.9.2-.4.2-.7.1-1zM12 2a10 10 0 100 20 10 10 0 000-20zm0 18.2a8.2 8.2 0 110-16.4 8.2 8.2 0 010 16.4z" />
+    </svg>
+);
+
 /**
  * Futuristic hero inspired by the provided reference:
  * - Big bold title with neon outline
@@ -21,6 +33,12 @@ export default function Hero() {
   const [isHover, setIsHover] = useState(false);
   const hoverRef = useRef(false);
   const [spot, setSpot] = useState<{ x: number; y: number }>({ x: 50, y: 50 });
+
+  // --- REPLACE THE OLD CONFIG BLOCK WITH THIS CORRECTED ONE ---
+  const twilioWhatsAppNumber = "14155238886"; // The exact number from your screenshot
+  const preFilledMessage = "join shoulder-managed"; // The exact join code from your screenshot
+  const whatsappUrl = `https://wa.me/${twilioWhatsAppNumber}?text=${encodeURIComponent(preFilledMessage)}`;
+  // --- END OF CORRECTED BLOCK ---
 
   // Extract a simple average color from /ai.jpeg to theme gradients
   useEffect(() => {
@@ -163,6 +181,17 @@ export default function Hero() {
             <a ref={ctaRef} href="/sign-in" className="inline-flex items-center justify-center px-6 py-3 rounded-xl font-semibold bg-gradient-to-r from-pink-500 to-purple-600 shadow-[0_0_40px_rgba(168,85,247,0.35)] hover:from-pink-400 hover:to-purple-500 transition-colors">
               Get started
             </a>
+            {/* --- ADD THIS NEW BUTTON --- */}
+            <a
+                href={whatsappUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center px-6 py-3 rounded-xl font-semibold bg-green-600 hover:bg-green-500 transition-colors"
+            >
+              <WhatsAppIcon />
+              Chat on WhatsApp
+            </a>
+            {/* --- END OF NEW BUTTON --- */}
             <a href="#about" className="inline-flex items-center justify-center px-6 py-3 rounded-xl border border-white/15 bg-white/5 hover:bg-white/10 transition">
               Learn More
             </a>
