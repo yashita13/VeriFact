@@ -206,7 +206,7 @@ export default function ResultsPage() {
                             </div>
 
                             <div className="bg-gradient-to-r from-pink-600 to-purple-600 rounded-2xl shadow-xl text-center p-6 hover:scale-105 transition">
-                                <Link href="/analyze" className="font-bold text-lg text-white">
+                                <Link href="/analyser" className="font-bold text-lg text-white">
                                     🔄 New Check
                                 </Link>
                             </div>
