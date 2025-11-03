@@ -18,7 +18,7 @@ from cachetools import TTLCache
 from newspaper import Article, Config
 from PIL import Image
 import pytesseract
-import whisper
+# import whisper
 from moviepy.editor import VideoFileClip
 
 # ---------------- Twilio Imports (NEW) ----------------
@@ -359,7 +359,7 @@ async def whatsapp_webhook(
         try:
             # --- Move the import here ---
             from detect_real import analyze_image
-            
+
             ext = MediaContentType0.split("/")[-1]
             temp_path = f"temp_deepfake_{urllib.parse.quote_plus(From)}.{ext}"
 
