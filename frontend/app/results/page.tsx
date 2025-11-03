@@ -152,10 +152,17 @@ export default function ResultsPage() {
                                     <div className="mt-4">
                                         <strong className="text-pink-300">Techniques Detected:</strong>
                                         <ul className="list-disc pl-6 text-gray-300 text-sm mt-1">
-                                            {techniques.map((t, i) => <li key={i}>{t}</li>)}
+                                            {techniques.map((t: any, i) => (
+                                                <li key={i}>
+                                                    {typeof t === 'string'
+                                                        ? t
+                                                        : `${t.technique || 'Unknown technique'}${t.reason_for_detection ? ` — ${t.reason_for_detection}` : ''}`}
+                                                </li>
+                                            ))}
                                         </ul>
                                     </div>
                                 )}
+
                             </div>
 
                             {webResults.length > 0 && (
