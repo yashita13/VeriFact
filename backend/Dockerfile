@@ -5,7 +5,7 @@ FROM python:3.9-slim
 WORKDIR /app
 
 # ---- This is the line that fixes your Tesseract error ----
-RUN apt-get update && apt-get install -y tesseract-ocr libgl1-mesa-glx
+RUN apt-get update && apt-get install -y tesseract-ocr libgl1
 
 # Copy your Python requirements file
 COPY requirements.txt requirements.txt
