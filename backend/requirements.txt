@@ -1,3 +1,6 @@
+# This line is critical for installing the small, CPU-only version of PyTorch
+--index-url https://download.pytorch.org/whl/cpu
+
 # --- FastAPI & Server ---
 fastapi
 uvicorn
@@ -38,3 +41,4 @@ python-dotenv
 streamlit
 tavily-python
 twilio
+
