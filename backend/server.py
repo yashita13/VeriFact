@@ -34,6 +34,9 @@ import requests
 # ---------------- App Setup ----------------
 app = FastAPI()
 cache = TTLCache(maxsize=500, ttl=3600)
+@app.get("/")
+def read_root():
+    return {"status": "ok"}
 
 @app.get("/healthz")
 def health_check():
