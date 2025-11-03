@@ -19,7 +19,7 @@ from newspaper import Article, Config
 from PIL import Image
 import pytesseract
 # import whisper
-from moviepy.editor import VideoFileClip
+# from moviepy.editor import VideoFileClip
 
 # ---------------- Twilio Imports (NEW) ----------------
 from twilio.rest import Client as TwilioClient
