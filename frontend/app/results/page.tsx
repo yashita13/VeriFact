@@ -111,7 +111,7 @@ export default function ResultsPage() {
                             <h3 className="font-semibold text-red-300 mb-2">⚠️ Could Not Display a Complete Result</h3>
                             {parseError && <p className="text-sm text-red-200">{parseError}</p>}
                             {apiError && <p className="text-sm text-red-200">API error: {apiError}</p>}
-                            <p className="text-xs mt-2 text-red-300/70">Try running the analysis again. If this persists, clear the browser's sessionStorage and retry.</p>
+                            <p className="text-xs mt-2 text-red-300/70">Try running the analysis again. If this persists clear the browsers sessionStorage and retry.</p>
                         </div>
                     )}
 
