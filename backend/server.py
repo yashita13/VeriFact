@@ -12,7 +12,18 @@ from pydantic import BaseModel
 from typing import Optional
 from cachetools import TTLCache
 # 🔵 Deepfake detection import
-from detect_real import analyze_image
+# from detect_real import analyze_image
+
+# ---------------- Media Processing Imports (Self-contained) ----------------
+from newspaper import Article, Config
+from PIL import Image
+import pytesseract
+import whisper
+from moviepy.editor import VideoFileClip
+
+# ---------------- Twilio Imports (NEW) ----------------
+from twilio.rest import Client as TwilioClient
+from twilio.twiml.messaging_response import MessagingResponse
 
 # ---------------- Load Environment ----------------
 from dotenv import load_dotenv
@@ -27,6 +38,16 @@ cache = TTLCache(maxsize=500, ttl=3600)
 @app.get("/healthz")
 def health_check():
     return {"status": "ok"}
+
+# --- CORS Middleware (Existing) ---
+allowed_origins = os.getenv("ALLOWED_ORIGINS", "http://localhost:3000,http://localhost:3001").split(",")
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=allowed_origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # def upload_to_imgbb(image_path, api_key="dcdadc1d756947a4074f6d548b0e28c0"):
 def upload_to_imgbb(image_path):
@@ -43,29 +64,6 @@ def upload_to_imgbb(image_path):
     data = response.json()
     return data["data"]["url"]
 
-
-
-# ---------------- Media Processing Imports (Self-contained) ----------------
-from newspaper import Article, Config
-from PIL import Image
-import pytesseract
-import whisper
-from moviepy.editor import VideoFileClip
-
-# ---------------- Twilio Imports (NEW) ----------------
-from twilio.rest import Client as TwilioClient
-from twilio.twiml.messaging_response import MessagingResponse
-
-
-# --- CORS Middleware (Existing) ---
-allowed_origins = os.getenv("ALLOWED_ORIGINS", "http://localhost:3000,http://localhost:3001").split(",")
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=allowed_origins,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
 
 # --- Twilio Client Setup (NEW) ---
 TWILIO_ACCOUNT_SID = os.getenv("TWILIO_ACCOUNT_SID")
@@ -113,27 +111,27 @@ def get_text_from_image_server(image_path):
         print(f"❌ Error extracting from image: {e}")
         return None
 
-def get_text_from_media_server(media_path):
-    try:
-        print("🎤 Transcribing media file...")
-        audio_path_to_process = media_path
-        if media_path.lower().endswith(('.mp4', '.mov', '.avi')):
-            print("📹 Video file detected. Extracting audio...")
-            video = VideoFileClip(media_path)
-            audio_path_to_process = "temp_audio.wav"
-            video.audio.write_audiofile(audio_path_to_process, codec='pcm_s16le')
-
-        model = whisper.load_model("base")
-        result = model.transcribe(audio_path_to_process)
-
-        if audio_path_to_process != media_path and os.path.exists(audio_path_to_process):
-            os.remove(audio_path_to_process)
-
-        print("✅ Transcription complete.")
-        return result["text"]
-    except Exception as e:
-        print(f"❌ Error transcribing media: {e}")
-        return None
+# def get_text_from_media_server(media_path):
+#     try:
+#         print("🎤 Transcribing media file...")
+#         audio_path_to_process = media_path
+#         if media_path.lower().endswith(('.mp4', '.mov', '.avi')):
+#             print("📹 Video file detected. Extracting audio...")
+#             video = VideoFileClip(media_path)
+#             audio_path_to_process = "temp_audio.wav"
+#             video.audio.write_audiofile(audio_path_to_process, codec='pcm_s16le')
+#
+#         model = whisper.load_model("base")
+#         result = model.transcribe(audio_path_to_process)
+#
+#         if audio_path_to_process != media_path and os.path.exists(audio_path_to_process):
+#             os.remove(audio_path_to_process)
+#
+#         print("✅ Transcription complete.")
+#         return result["text"]
+#     except Exception as e:
+#         print(f"❌ Error transcribing media: {e}")
+#         return None
 
 # ---------------- Pipeline Runner (Existing) ----------------
 async def run_analysis_pipeline(input_text: str):
@@ -192,6 +190,9 @@ async def analyze_text_or_url(req: AnalyzeRequest):
 
 @app.post("/analyze-file")
 async def analyze_file(file: UploadFile = File(...)):
+    # --- Move the import here ---
+    from detect_real import analyze_image
+
     """(Existing) Handles file uploads (images, media) which arrive as multipart/form-data."""
     temp_path = f"temp_{file.filename}"
     with open(temp_path, "wb") as f:
@@ -202,8 +203,8 @@ async def analyze_file(file: UploadFile = File(...)):
         ext = file.filename.split(".")[-1].lower()
         if ext in ["png", "jpg", "jpeg"]:
             raw_text = await asyncio.to_thread(get_text_from_image_server, temp_path)
-        elif ext in ["mp3", "wav", "mp4", "mov", "avi"]:
-            raw_text = await asyncio.to_thread(get_text_from_media_server, temp_path)
+        # elif ext in ["mp3", "wav", "mp4", "mov", "avi"]:
+        #     raw_text = await asyncio.to_thread(get_text_from_media_server, temp_path)
         else:
             raise HTTPException(status_code=400, detail=f"Unsupported file type: {ext}")
 
@@ -356,6 +357,9 @@ async def whatsapp_webhook(
         )
 
         try:
+            # --- Move the import here ---
+            from detect_real import analyze_image
+            
             ext = MediaContentType0.split("/")[-1]
             temp_path = f"temp_deepfake_{urllib.parse.quote_plus(From)}.{ext}"
 
@@ -449,8 +453,8 @@ async def whatsapp_webhook(
                     f.write(media_data.content)
                 if content_type == "image":
                     raw_text = await asyncio.to_thread(get_text_from_image_server, temp_path)
-                elif content_type in ["audio", "video"]:
-                    raw_text = await asyncio.to_thread(get_text_from_media_server, temp_path)
+                # elif content_type in ["audio", "video"]:
+                #     raw_text = await asyncio.to_thread(get_text_from_media_server, temp_path)
             elif Body and re.search(r'https?://\S+', Body):
                 url = re.search(r'(https?://\S+)', Body).group(1)
                 raw_text = await asyncio.to_thread(get_text_from_url_server, url)
