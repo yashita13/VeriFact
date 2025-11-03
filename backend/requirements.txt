@@ -8,11 +8,11 @@ uvicorn
 python-multipart
 
 # --- LangChain & AI Core (Modern Versions) ---
-langchain
-langchain-core
-langchain-google-genai
-google-generativeai
-pydantic
+langchain==0.2.1
+langchain-core==0.2.3
+langchain-google-genai==1.0.6
+google-generativeai==0.5.4
+pydantic==2.7.4
 
 # --- Deepfake Detection & Dependencies (UNPINNED) ---
 torch
@@ -42,5 +42,6 @@ python-dotenv
 streamlit
 tavily-python
 twilio
+
 
 
