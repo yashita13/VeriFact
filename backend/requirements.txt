@@ -1,3 +1,7 @@
+-i https://pypi.org/simple
+--extra-index-url https://download.pytorch.org/whl/cpu
+
+
 # --- FastAPI & Server ---
 fastapi
 uvicorn
@@ -38,3 +42,5 @@ python-dotenv
 streamlit
 tavily-python
 twilio
+
+

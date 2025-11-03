@@ -22,7 +22,7 @@ from langdetect import detect
 from newspaper import Article, Config
 from PIL import Image
 import pytesseract
-import whisper
+# import whisper
 #from moviepy import VideoFileClip
 
 
