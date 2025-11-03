@@ -5,42 +5,42 @@ import Navbar from "@/components/navbar";
 import Link from "next/link";
 import type { AnalysisResponse, Decision } from "@/lib/types";
 
-type Decision = 'True' | 'False' | 'Misleading' | 'Unverifiable' | 'Error';
+// type Decision = 'True' | 'False' | 'Misleading' | 'Unverifiable' | 'Error';
 
-interface ClaimBreakdown {
-    sub_claim: string;
-    status: 'Supported' | 'Refuted' | 'Contradicted' | 'Unverifiable';
-    evidence: string;
-    source_url?: string;
-    reason_for_decision: string;
-}
-
-interface Explanation {
-    claim_breakdown: ClaimBreakdown[];
-    explanation: string;
-    corrected_news?: string;
-    explanatory_tag?: string;
-    misinformation_techniques?: string[];
-}
-
-export interface WebResult {
-    title: string;
-    url: string;
-}
-
-interface AnalysisResponse {
-    summary?: string;
-    final_verdict?: {
-        decision?: Decision;
-        fake_score?: number;
-        reasoning?: string;
-    };
-    explanation?: Partial<Explanation>;
-    web_results?: WebResult[];
-    fact_check_api?: any[];
-    error?: string;
-    detail?: any;
-}
+// interface ClaimBreakdown {
+//     sub_claim: string;
+//     status: 'Supported' | 'Refuted' | 'Contradicted' | 'Unverifiable';
+//     evidence: string;
+//     source_url?: string;
+//     reason_for_decision: string;
+// }
+//
+// interface Explanation {
+//     claim_breakdown: ClaimBreakdown[];
+//     explanation: string;
+//     corrected_news?: string;
+//     explanatory_tag?: string;
+//     misinformation_techniques?: string[];
+// }
+//
+// export interface WebResult {
+//     title: string;
+//     url: string;
+// }
+//
+// export interface AnalysisResponse {
+//     summary?: string;
+//     final_verdict?: {
+//         decision?: Decision;
+//         fake_score?: number;
+//         reasoning?: string;
+//     };
+//     explanation?: Partial<Explanation>;
+//     web_results?: WebResult[];
+//     fact_check_api?: any[];
+//     error?: string;
+//     detail?: any;
+// }
 
 
 export default function ResultsPage() {
