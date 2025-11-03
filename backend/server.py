@@ -19,6 +19,11 @@ from dotenv import load_dotenv
 load_dotenv()
 
 import requests
+
+# ---------------- App Setup ----------------
+app = FastAPI()
+cache = TTLCache(maxsize=500, ttl=3600)
+
 @app.get("/healthz")
 def health_check():
     return {"status": "ok"}
@@ -51,9 +56,6 @@ from moviepy.editor import VideoFileClip
 from twilio.rest import Client as TwilioClient
 from twilio.twiml.messaging_response import MessagingResponse
 
-# ---------------- App Setup ----------------
-app = FastAPI()
-cache = TTLCache(maxsize=500, ttl=3600)
 
 # --- CORS Middleware (Existing) ---
 allowed_origins = os.getenv("ALLOWED_ORIGINS", "http://localhost:3000,http://localhost:3001").split(",")
